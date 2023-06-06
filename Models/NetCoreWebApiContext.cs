@@ -22,7 +22,7 @@ namespace ApiRESTWithNet6.Models
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             if (!optionsBuilder.IsConfigured)
-                optionsBuilder.UseSqlServer("Server=.\\SQLEXPRESS;Database=NetCoreWebApi;Trusted_Connection=True;");
+                optionsBuilder.UseSqlServer(Settings.GetDefaulConnectionString());
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -36,6 +36,19 @@ namespace ApiRESTWithNet6.Models
             {
                 entity.ToTable("User");
             });
+
+            var adminUser = new User()
+            {
+                Id = -1,
+                Name = "Admin",
+                LastName = "Admin",
+                Email = "admin@email.com",
+                Role = "Admin",
+                UserName = "admin",
+                Password = Security.CreateSHA256("admin")
+            };
+
+            modelBuilder.Entity<User>().HasData(adminUser);
 
             OnModelCreatingPartial(modelBuilder);
         }
